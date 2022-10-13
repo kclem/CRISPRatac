@@ -153,7 +153,7 @@ def main():
                     input_fastq_file = curr_r1_file,
                     assignment_file = custom_r1_assignments,
                     target_info = target_info,
-                    crispresso_name_suffix = 'r1',
+                    crispresso_name_suffix = 'R1',
                     crispresso_min_count = settings['crispresso_min_count'],
                     crispresso_min_aln_score = settings['crispresso_min_aln_score'],
                     crispresso_quant_window_size = settings['crispresso_quant_window_size'],
@@ -198,7 +198,7 @@ def main():
                         input_fastq_file = curr_r2_file,
                         assignment_file = custom_r2_assignments,
                         target_info = target_info,
-                        crispresso_name_suffix = 'r2',
+                        crispresso_name_suffix = 'R2',
                         crispresso_min_count = settings['crispresso_min_count'],
                         crispresso_min_aln_score = settings['crispresso_min_aln_score'],
                         crispresso_quant_window_size = settings['crispresso_quant_window_size'],
@@ -1472,7 +1472,7 @@ def run_crispresso2(root,input_fastq_file,assignment_file,target_info,crispresso
     """
 
     logger = logging.getLogger('CRISPRatac')
-    logger.info('Analysis of custom targets by CRISPResso2')
+    logger.info('Analysis of ' + crispresso_name_suffix + ' custom targets by CRISPResso2')
 
     id_ind = 0
     source_ind = 1
@@ -1534,7 +1534,7 @@ def run_crispresso2(root,input_fastq_file,assignment_file,target_info,crispresso
 
         target = read_ids_for_crispresso[read_id]
         if target not in target_names:
-            target_names[target] = target + crispresso_name_suffix
+            target_names[target] = target +'_'+ crispresso_name_suffix
         target_name = target_names[target]
 
         if aligned_target_counts[target] < crispresso_min_count:
