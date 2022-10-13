@@ -1488,8 +1488,12 @@ def run_crispresso2(root,input_fastq_file,assignment_file,target_info,crispresso
         head = fin.readline()
         for line in fin:
             line_els = line.split("\t")
-            position = line_els[alignment_ind]
-            target_name = position.split(":")[0]
+            target_els = line_els[annotation_ind].split(" ")
+            if len(target_els) < 2:
+                print("Can't parse target from " + str(target_els))
+                target_name = target_els[0]
+            else:
+                target_name = target_els[1]
             read_ids_for_crispresso[line_els[id_ind]] = target_name
             aligned_target_counts[target_name] += 1
             
@@ -1551,14 +1555,14 @@ def run_crispresso2(root,input_fastq_file,assignment_file,target_info,crispresso
         amp_seq = target_info[target]['sequence']
         amp_len = len(amp_seq)
         guide_len = 10
-        guide_seq = amp_seq[amp_len-guide_len:amp_len+guide_len]
-        half_amp_len = amp_len/2
+        half_amp_len = int(amp_len/2)
+        guide_seq = amp_seq[half_amp_len-guide_len:half_amp_len+guide_len]
         reads_file = os.path.join(data_dir,target_name+".fq")
         processes_str = ""
         if n_processes > 4:
             processes_str = "--n_processes 4"
         output_folder = os.path.join(data_dir,'CRISPResso_on_'+target_name)
-        crispresso_cmd = "%s -o %s -n %s --default_min_aln_score %d -a %s -g %s -gn cut_site -wc %s -w %s -r1 %s --fastq_output --quantification_window_coordinates %s %s &> %s.log"%(crispresso_command,data_dir,target_name,crispresso_min_aln_score,
+        crispresso_cmd = "%s -o %s -n %s --default_min_aln_score %d -a %s -g %s -gn cut_site -wc %s -w %s -r1 %s --fastq_output %s &> %s.log"%(crispresso_command,data_dir,target_name,crispresso_min_aln_score,
             amp_seq,guide_seq,guide_len,crispresso_quant_window_size,reads_file,processes_str,reads_file)
 
         crispresso_commands.append(crispresso_cmd)
@@ -1577,7 +1581,7 @@ def run_crispresso2(root,input_fastq_file,assignment_file,target_info,crispresso
     crispresso_sub_htmls = {}
     crispresso_info_file = root + '.summary.txt'
     with open(crispresso_info_file,'w') as crispresso_info_fh:
-        crispresso_info_fh.write('name\tprinted_reads_count\tcommand\tsuccess\n')
+        crispresso_info_fh.write('name\tprinted_read_count\tcommand\tsuccess\n')
         for crispresso_info in crispresso_infos:
             name = crispresso_info['name']
             run_success = False
@@ -1593,7 +1597,7 @@ def run_crispresso2(root,input_fastq_file,assignment_file,target_info,crispresso
                     if os.path.isfile(report_file_loc):
                         crispresso_run_names.append(name)
                         crispresso_sub_htmls[name] = report_file_loc
-            crispresso_info_fh.write("\t".join([str(x) for x in [name,crispresso_info['printed_reads_count'],crispresso_info['comamnd'],run_success]])+"\n")
+            crispresso_info_fh.write("\t".join([str(x) for x in [name,crispresso_info['printed_read_count'],crispresso_info['command'],run_success]])+"\n")
 
     return (crispresso_run_names,crispresso_sub_htmls)
 
