@@ -1563,7 +1563,7 @@ def run_crispresso2(root,input_fastq_file,assignment_file,target_info,crispresso
             processes_str = "--n_processes 4"
         output_folder = os.path.join(data_dir,'CRISPResso_on_'+target_name)
         crispresso_cmd = "%s -o %s -n %s --default_min_aln_score %d -a %s -g %s -gn cut_site -wc %s -w %s -r1 %s --fastq_output %s &> %s.log"%(crispresso_command,data_dir,target_name,crispresso_min_aln_score,
-            amp_seq,guide_seq,guide_len,crispresso_quant_window_size,reads_file,processes_str,reads_file)
+            amp_seq,guide_seq,-guide_len,crispresso_quant_window_size,reads_file,processes_str,reads_file)
 
         crispresso_commands.append(crispresso_cmd)
         crispresso_infos.append({
